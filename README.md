@@ -1,18 +1,16 @@
 # BFF Framework
 
-
-
 ## Nonfunctional requirements
 
-- Perfomance
+- Performance
 - Security
-- Scalable
+- Scalability
 - Observability
 
 ## Functional requirements
 
 - Request orchestration
-  - Paralelism
+  - Parallelism
   - Cache
   - Rate limit
   - Circuit Breaker
