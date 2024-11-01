@@ -1,8 +1,6 @@
-import { fsRoutes, staticFiles } from "fresh";
-import { App } from "jacu";
-import { define, type State } from "./utils.ts";
+import { App, fsRoutes } from "jacu";
 
-export const app = new App<State>();
+export const app = new App();
 // app.use(staticFiles());
 
 // this can also be defined via a file. feel free to delete this!
@@ -13,13 +11,9 @@ export const app = new App<State>();
 // app.use(exampleLoggerMiddleware);
 //
 
-console.log(JSON.stringify(import.meta));
-
-//await fsRoutes(app, {
-//  dir: "./",
-//  loadIsland: (path) => import(`./islands/${path}`),
-//  loadRoute: (path) => import(`./routes/${path}`),
-//});
+await fsRoutes(app, {
+  loadRoute: (path) => import(`./routes/${path}`),
+});
 
 if (import.meta.main) {
   await app.listen();

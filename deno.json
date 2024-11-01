@@ -3,6 +3,9 @@
   "version": "0.0.1-alpha",
   "license": "MIT",
   "exports": {
-    ".": "./src/mod.ts"	  
+    ".": "./src/mod.ts"
+  },
+  "imports": {
+    "@std/path": "jsr:@std/path@1"
   }
 }

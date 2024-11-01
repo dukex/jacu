@@ -18,6 +18,8 @@
     "**/_fresh/*"
   ],
   "imports": {
+    "@std/fs": "jsr:@std/fs@1",
+    "@std/path": "jsr:@std/path@1",
     "jacu": "../../src/mod.ts",
     "fresh": "jsr:@fresh/core@^2.0.0-alpha.23",
     "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@^0.0.1-alpha.7",

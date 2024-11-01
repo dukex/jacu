@@ -15,31 +15,20 @@ deno task dev
 
 This will watch the project directory and restart as necessary.
 
-
 ## Routes
 
-GET
-http://localhost:9000/v1/home
-    https://fakestoreapi.com/products?limit=5
-    https://fakestoreapi.com/products/categories
-    https://fakestoreapi.com/users/:loggedUserId
-    https://fakestoreapi.com/carts/user/:loggedUserId
+GET http://localhost:9000/v1/home https://fakestoreapi.com/products?limit=5 -
+Cached 30m https://fakestoreapi.com/products/categories - Cached 2d
+https://fakestoreapi.com/users/:loggedUserId - Cached 5d
+https://fakestoreapi.com/carts/user/:loggedUserId - Cached 2m
 
-GET
-http://localhost:9000/v1/products/:id
-    https://fakestoreapi.com/products/1
-    https://fakestoreapi.com/carts/user/:loggedUserId - is the product in cart?
-    https://fakestoreapi.com/products/category/:projectCategory - releated
+GET http://localhost:9000/v1/products/:id https://fakestoreapi.com/products/1
+https://fakestoreapi.com/carts/user/:loggedUserId - is the product in cart?
+https://fakestoreapi.com/products/category/:projectCategory - releated
 
-GET
-http://localhost:9000/v1/cart - logged user cart
-    https://fakestoreapi.com/carts/:loggedUserCartId
-    https://fakestoreapi.com/products/:productId for each products
-    https://viacep.com.br/ws/:cardZipCode/json/
+GET http://localhost:9000/v1/cart - logged user cart
+https://fakestoreapi.com/carts/:loggedUserCartId
+https://fakestoreapi.com/products/:productId for each products
+https://viacep.com.br/ws/:cardZipCode/json/
 
-
-POST
-http://localhost:9000/v1/session
-    https://fakestoreapi.com/auth/login
-
-        
+POST http://localhost:9000/v1/session https://fakestoreapi.com/auth/login

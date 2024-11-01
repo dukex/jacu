@@ -1,34 +1,54 @@
+class Router {
+  _routes = [];
+
+  construtor() {
+  }
+
+  add(method: string, path: string, handler: () => void) {
+    this._routes.push({
+      path,
+      handler,
+      method,
+    });
+  }
+
+  match(method: string, url: URL) {
+    return this._routes.filter((route) => {
+      return route.method === method && route.path === url.pathname;
+    })[0];
+  }
+}
+
 export class App {
-	async handler(): Promise<(request: Request, info?: Deno.ServeHandlerInfo) => Promise<Response>> {
-		return async function(
-			request: Request,
-			info: Deno.ServeHandlerInfo = {}
-		) {
-			const req = request;
-			console.log("Method:", req.method);
+  #router: Router = new Router();
 
-			const url = new URL(req.url);
-			console.log("Path:", url.pathname);
-			console.log("Query parameters:", url.searchParams);
+  get(path: string, handler: () => void) {
+    this.#router.add("GET", path, handler);
+  }
 
-			console.log("Headers:", req.headers);
+  async handler(): Promise<
+    (request: Request, info?: Deno.ServeHandlerInfo) => Promise<Response>
+  > {
+    return async (
+      request: Request,
+      info: Deno.ServeHandlerInfo = {},
+    ) => {
+      const url = new URL(request.url);
+      // Prevent open redirect attacks
+      url.pathname = url.pathname.replace(/\/+/g, "/");
 
-			if (req.body) {
-				const body = await req.text();
-				console.log("Body:", body);
-			}
+      const method = request.method.toUpperCase() as Method;
+      const { handler } = this.#router.match(method, url);
 
+      const ctx = {};
 
-			return new Response("Hello, World!");
+      return await handler(ctx);
+    };
+  }
 
-		}
+  async listen() {
+    const handler = await this.handler();
 
-	}
-
-	async listen() {
-		const handler = await this.handler() 
-
-		await Deno.serve({ port: 9000 }, handler);
-	}
-
+    await Deno.serve({ port: 9000 }, handler);
+  }
 }
