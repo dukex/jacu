@@ -26,9 +26,10 @@
 
 - [-] Create a HTTP server
 - [ ] Route system (file based)
-  - [ ] Understand the `createDefine` in routes, it's necessary
+  - [x] Understand the `createDefine` in routes, it's necessary
   - [x] Create GET /v1/home dirty way
-  - [ ] Create GET /v1/home works as BFF
+  - [-] Create GET /v1/home works as BFF
+- [ ] Unit test routes
 - [ ] Middlewares
 - [ ] Auth0 support
 - [ ] JWT support
