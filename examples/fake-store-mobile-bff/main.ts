@@ -1,4 +1,4 @@
-import { App, fsRoutes } from "jacu";
+import { App } from "jacu";
 
 export const app = new App();
 // app.use(staticFiles());
@@ -10,10 +10,7 @@ export const app = new App();
 // });
 // app.use(exampleLoggerMiddleware);
 //
-
-await fsRoutes(app, {
-  loadRoute: (path) => import(`./routes/${path}`),
-});
+await app.enableFilesystemRoutes();
 
 if (import.meta.main) {
   await app.listen();

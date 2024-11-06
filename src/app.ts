@@ -1,54 +1,63 @@
-class Router {
-  _routes = [];
+import { JacuContext } from "./context.ts";
+import {
+  Router,
+  FilesystemRoutes,
+  type HandlerFn,
+  type Method,
+} from "./router/mod.ts";
+import type { IApp } from "./type.ts";
 
-  construtor() {
-  }
-
-  add(method: string, path: string, handler: () => void) {
-    this._routes.push({
-      path,
-      handler,
-      method,
-    });
-  }
-
-  match(method: string, url: URL) {
-    return this._routes.filter((route) => {
-      return route.method === method && route.path === url.pathname;
-    })[0];
-  }
-}
-
-export class App {
+export class App implements IApp {
   #router: Router = new Router();
 
-  get(path: string, handler: () => void) {
+  get(path: string, handler: HandlerFn) {
     this.#router.add("GET", path, handler);
   }
 
-  async handler(): Promise<
-    (request: Request, info?: Deno.ServeHandlerInfo) => Promise<Response>
-  > {
-    return async (
-      request: Request,
-      info: Deno.ServeHandlerInfo = {},
-    ) => {
+  post(path: string, handler: HandlerFn) {
+    this.#router.add("POST", path, handler);
+  }
+
+  get routes() {
+    return this.#router.routes;
+  }
+
+  async enableFilesystemRoutes(): Promise<void> {
+    const feature = new FilesystemRoutes(this);
+    await feature.enable();
+  }
+
+  handler(): (
+    request: Request,
+    info?: Deno.ServeHandlerInfo,
+  ) => Promise<Response> {
+    return async (request: Request, info?: Deno.ServeHandlerInfo) => {
       const url = new URL(request.url);
       // Prevent open redirect attacks
-      url.pathname = url.pathname.replace(/\/+/g, "/");
-
+      // url.pathname = url.pathname.replace(/\/+/g, "/");
       const method = request.method.toUpperCase() as Method;
-      const { handler } = this.#router.match(method, url);
+      const found = this.#router.match(method, url);
 
-      const ctx = {};
+      if (!found) {
+        return new Response("not found", { status: 404 });
+      }
 
-      return await handler(ctx);
+      const ctx = new JacuContext(request, url, info);
+
+      return await found.handler(ctx);
     };
   }
 
-  async listen() {
-    const handler = await this.handler();
-
-    await Deno.serve({ port: 9000 }, handler);
+  listen() {
+    return Deno.serve(
+      {
+        port: 9000,
+        onListen: ({ port, hostname }) => {
+          console.log(`Server started at http://${hostname}:${port}`);
+          console.table(this.routes, ["method", "path", "name"]);
+        },
+      },
+      this.handler(),
+    );
   }
 }
