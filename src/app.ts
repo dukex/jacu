@@ -48,7 +48,10 @@ export class App implements IApp {
     };
   }
 
-  listen() {
+  async listen() {
+    await this.enableFilesystemRoutes();
+    // await this.enableLogging();
+
     return Deno.serve(
       {
         port: 9000,
