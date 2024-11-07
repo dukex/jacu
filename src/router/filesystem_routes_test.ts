@@ -2,7 +2,7 @@ import { expect } from "@std/expect";
 import { App } from "../app.ts";
 import FilesystemRoutes from "./filesystem_routes.ts";
 import type { FilesystemWrapper } from "../filesystem_wrapper.ts";
-import type { HandlerFn } from "./mod.ts";
+import type { HandlerFn } from "../context.ts";
 import type Context from "../context.ts";
 
 type FileImported = null | { default?: HandlerFn };

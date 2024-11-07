@@ -1,5 +1,5 @@
 import { walk, type WalkEntry, type WalkOptions } from "@std/fs/walk";
-import type { HandlerFn } from "./router/mod.ts";
+import type { HandlerFn } from "./context.ts";
 
 export interface FilesystemWrapper {
   cwd(): string;

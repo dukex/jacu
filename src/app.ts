@@ -1,11 +1,10 @@
-import { JacuContext } from "./context.ts";
-import {
-  Router,
-  FilesystemRoutes,
-  type HandlerFn,
-  type Method,
-} from "./router/mod.ts";
+import type Context from "./context.ts";
+import { JacuContext, type HandlerFn } from "./context.ts";
+import { Router, FilesystemRoutes, type Method } from "./router/mod.ts";
 import type { IApp } from "./type.ts";
+
+const DEFAULT_NOT_FOUND = () =>
+  Promise.resolve(new Response("not found", { status: 404 }));
 
 export class App implements IApp {
   #router: Router = new Router();
@@ -36,15 +35,32 @@ export class App implements IApp {
       // Prevent open redirect attacks
       // url.pathname = url.pathname.replace(/\/+/g, "/");
       const method = request.method.toUpperCase() as Method;
-      const found = this.#router.match(method, url);
+      const routeResult = this.#router.match(method, url);
 
-      if (!found) {
-        return new Response("not found", { status: 404 });
+      const ctx = new JacuContext<{ a: string }>(
+        request,
+        url,
+        DEFAULT_NOT_FOUND,
+        info,
+      );
+
+      let fn = ctx.next;
+
+      let j = routeResult.handlers.length;
+      while (j--) {
+        const next = routeResult.handlers[j];
+        const local = fn;
+        fn = async () => {
+          ctx.next = local;
+          try {
+            return await next(ctx);
+          } catch (error) {
+            throw error;
+          }
+        };
       }
 
-      const ctx = new JacuContext(request, url, info);
-
-      return await found.handler(ctx);
+      return await fn();
     };
   }
 
