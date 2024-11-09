@@ -82,4 +82,24 @@ Deno.test("create a new App", async (t) => {
 
     expect(await response.json()).toEqual({ test: "post", ok: true });
   });
+
+  await t.step("handle double slashes", async () => {
+    const appHandler = app.handler();
+
+    const handler = ({ url }: Context) => {
+      expect(url.pathname).toEqual("/testing/double-slashes");
+
+      return Promise.resolve(Response.json({ test: "get", ok: true }));
+    };
+
+    app.get("/testing/double-slashes", handler);
+
+    const request = new Request(
+      new URL("http://localhost/testing//double-slashes"),
+    );
+
+    const response = await appHandler(request);
+
+    expect(await response.json()).toEqual({ test: "get", ok: true });
+  });
 });

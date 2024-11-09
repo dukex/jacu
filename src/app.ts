@@ -1,4 +1,3 @@
-import type Context from "./context.ts";
 import { JacuContext, type HandlerFn } from "./context.ts";
 import { Router, FilesystemRoutes, type Method } from "./router/mod.ts";
 import type { IApp } from "./type.ts";
@@ -37,7 +36,7 @@ export class App implements IApp {
     return async (request: Request, info?: Deno.ServeHandlerInfo) => {
       const url = new URL(request.url);
       // Prevent open redirect attacks
-      // url.pathname = url.pathname.replace(/\/+/g, "/");
+      url.pathname = url.pathname.replace(/\/+/g, "/");
       const method = request.method.toUpperCase() as Method;
       const routeResult = this.#router.match(method, url);
 
