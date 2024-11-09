@@ -6,6 +6,7 @@ export default interface Context<State = Record<string, unknown>> {
   info?: Deno.ServeHandlerInfo;
   state: State;
   next: () => Promise<Response>;
+  redirect: (path: string) => Response;
 }
 
 export class JacuContext<State> implements Context<State> {
@@ -25,5 +26,12 @@ export class JacuContext<State> implements Context<State> {
     this.url = url;
     this.info = info;
     this.next = next;
+  }
+
+  redirect(path: string, status?: number) {
+    return new Response(null, {
+      status: status ?? 302,
+      headers: { location: path },
+    });
   }
 }

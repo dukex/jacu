@@ -26,19 +26,8 @@ export class App implements IApp {
     await feature.enable();
   }
 
-  enableLogging() {
-    this.#router.addMiddleware(async (ctx: Context) => {
-      const t1 = performance.now();
-      const response = await ctx.next();
-      const t2 = performance.now();
-      const responseTime = Math.round(t2 - t1);
-
-      console.log(
-        `${ctx.request.method} ${ctx.url.pathname} ${response.status} - ${responseTime.toString()}ms`,
-      );
-
-      return response;
-    });
+  use(handler: HandlerFn) {
+    this.#router.addMiddleware(handler);
   }
 
   handler(): (
@@ -81,7 +70,6 @@ export class App implements IApp {
 
   async listen() {
     await this.enableFilesystemRoutes();
-    this.enableLogging();
 
     return Deno.serve(
       {
