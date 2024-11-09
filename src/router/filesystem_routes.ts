@@ -17,19 +17,30 @@ export default class FilesystemRoutes {
     this.routerDir = path.join(this.fs.cwd(), rootDir || "./", "routes");
   }
 
+  toRoutePath(filePath: string): string {
+    const relative = path.relative(this.routerDir, filePath);
+    const url: URL = new URL(relative, "http://localhost/");
+    const routePath: string = url.pathname
+      .slice(0, url.pathname.lastIndexOf("."))
+      .slice(1);
+
+    const parts = routePath.split("/");
+
+    if (parts[parts.length - 1] === "index") {
+      parts.pop();
+    }
+
+    return parts.join("/");
+  }
+
   async enable(): Promise<void> {
     const routesFiles: string[] = await walkDir(this.routerDir, this.fs);
 
     const routes = await Promise.all(
       routesFiles
         .map((filePath) => {
-          const relative = path.relative(this.routerDir, filePath);
-
-          const url: URL = new URL(relative, "http://localhost/");
-          const routePath: string = url.pathname.slice(1);
-
           return {
-            routePath: `/${routePath.slice(0, routePath.lastIndexOf("."))}`,
+            routePath: `/${this.toRoutePath(filePath)}`,
             filePath,
           };
         })

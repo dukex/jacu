@@ -57,4 +57,17 @@ Deno.test("setup routes via file system", async (t) => {
 
     expect(app.routes).toEqual([{ method: "GET", path: "/v1/home", handler }]);
   });
+
+  await t.step("with index file", async () => {
+    const handler = (_ctx: Context) => Promise.resolve(new Response("ok"));
+    const routes = new FilesystemRoutes(
+      app,
+      createFakeFs({
+        "routes/v1/me/index.ts": { default: handler },
+      }),
+    );
+    await routes.enable();
+
+    expect(app.routes[1]).toEqual({ method: "GET", path: "/v1/me", handler });
+  });
 });
