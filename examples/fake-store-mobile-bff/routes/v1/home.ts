@@ -1,4 +1,6 @@
-function fetchCategoryProducts(category) {
+import type { Context } from "jacu";
+
+function fetchCategoryProducts(category: string) {
   return fetch(`https://fakestoreapi.com/products/category/${category}`).then(
     (response) => response.json(),
   );
@@ -6,23 +8,23 @@ function fetchCategoryProducts(category) {
 
 function fetchProducts() {
   return fetch("https://fakestoreapi.com/products?limit=5").then((response) =>
-    response.json(),
+    response.json()
   );
 }
 
 function fetchCategories() {
   return fetch("https://fakestoreapi.com/products/categories")
     .then((response) => response.json())
-    .then((categories) =>
+    .then((categories: string[]) =>
       Promise.allSettled(
         categories.map((category) => fetchCategoryProducts(category)),
       ).then((categoryProducts) =>
-        categoryProducts.map((products) => products.value),
-      ),
+        categoryProducts.map((products) => products.value)
+      )
     );
 }
 
-export default async function handler(ctx) {
+export default async function handler(_ctx: Context) {
   //  https://fakestoreapi.com/products?limit=5 - Cached 30m
   //  https://fakestoreapi.com/products/categories - Cached 2d
   //  https://fakestoreapi.com/products/category/:category

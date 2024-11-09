@@ -5,6 +5,10 @@
   "exports": {
     ".": "./src/mod.ts"
   },
+  "tasks": {
+    "coverage": "deno test --coverage=cov -A && deno coverage --html cov/",
+    "check": "deno lint && deno fmt && deno task coverage"
+  },
   "imports": {
     "@std/expect": "jsr:@std/expect@^1.0.7",
     "@std/path": "jsr:@std/path@1",

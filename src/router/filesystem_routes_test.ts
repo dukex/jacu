@@ -30,8 +30,6 @@ function createFakeFs(files: Record<string, FileImported>): FilesystemWrapper {
     import(path: string): Promise<null | { default?: HandlerFn }> {
       return Promise.resolve(files[path]);
     },
-    async mkdirp(_dir: string) {},
-    readFile: Deno.readFile,
   };
 }
 

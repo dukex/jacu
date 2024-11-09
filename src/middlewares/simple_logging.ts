@@ -1,6 +1,6 @@
 import type Context from "../context.ts";
 
-export default async function (ctx: Context) {
+export default async function (ctx: Context): Promise<Response> {
   const t1 = performance.now();
   const response = await ctx.next();
   const t2 = performance.now();

@@ -8,19 +8,11 @@ export interface FilesystemWrapper {
     options?: WalkOptions,
   ): AsyncIterableIterator<WalkEntry>;
   isDirectory(path: string | URL): Promise<boolean>;
-  mkdirp(dir: string): Promise<void>;
-  readFile(path: string | URL): Promise<Uint8Array>;
   import(path: string): Promise<null | { default?: HandlerFn }>;
 }
 
 export class FilesystemWrapperImpl implements FilesystemWrapper {
   constructor() {}
-  mkdirp(_dir: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  readFile(_path: string | URL): Promise<Uint8Array> {
-    throw new Error("Method not implemented.");
-  }
 
   isDirectory(_dir: string | URL) {
     return Promise.resolve(true);

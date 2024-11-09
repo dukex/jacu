@@ -1,5 +1,6 @@
-import { JacuContext, type HandlerFn } from "./context.ts";
-import { Router, FilesystemRoutes, type Method } from "./router/mod.ts";
+import { type HandlerFn, JacuContext } from "./context.ts";
+import { FilesystemRoutes, type Method, Router } from "./router/mod.ts";
+import type { Route } from "./router/router.ts";
 import type { IApp } from "./type.ts";
 
 const DEFAULT_NOT_FOUND = () =>
@@ -16,7 +17,7 @@ export class App implements IApp {
     this.#router.add("POST", path, handler);
   }
 
-  get routes() {
+  get routes(): Route[] {
     return this.#router.routes;
   }
 
@@ -67,7 +68,7 @@ export class App implements IApp {
     };
   }
 
-  async listen() {
+  async listen(): Promise<Deno.HttpServer<Deno.NetAddr>> {
     await this.enableFilesystemRoutes();
 
     return Deno.serve(
