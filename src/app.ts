@@ -1,4 +1,6 @@
+import type { AuthenticationStrategy } from "./authentication/mod.ts";
 import { type HandlerFn, JacuContext } from "./context.ts";
+import type { Context } from "./mod.ts";
 import { FilesystemRoutes, type Method, Router } from "./router/mod.ts";
 import type { Route } from "./router/router.ts";
 import type { IApp } from "./type.ts";
@@ -28,6 +30,22 @@ export class App implements IApp {
 
   use(handler: HandlerFn) {
     this.#router.addMiddleware(handler);
+    return this;
+  }
+
+  authentication<T>(strategy: AuthenticationStrategy<T>) {
+    return this.use((ctx: Context) => {
+      return strategy
+        .authenticate(ctx)
+        .then((user) => {
+          ctx.state.user = user;
+          return ctx.next();
+        })
+        .catch((err) => {
+          console.log(err);
+          return new Response("", { status: 401 });
+        });
+    });
   }
 
   handler(): (
