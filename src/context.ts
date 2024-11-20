@@ -1,4 +1,4 @@
-export type HandlerFn = (ctx: Context) => Promise<Response> | Response;
+export type HandlerFn = (ctx: Context) => Promise<Response>;
 
 export default interface Context<State = Record<string, unknown>> {
   request: Request;
@@ -6,7 +6,7 @@ export default interface Context<State = Record<string, unknown>> {
   info?: Deno.ServeHandlerInfo;
   state: State;
   next: () => Promise<Response>;
-  redirect: (path: string) => Response;
+  redirect: (path: string) => Promise<Response>;
 }
 
 export class JacuContext<State> implements Context<State> {
@@ -29,9 +29,11 @@ export class JacuContext<State> implements Context<State> {
   }
 
   redirect(path: string, status?: number) {
-    return new Response(null, {
-      status: status ?? 302,
-      headers: { location: path },
-    });
+    return Promise.resolve(
+      new Response(null, {
+        status: status ?? 302,
+        headers: { location: path },
+      }),
+    );
   }
 }

@@ -52,7 +52,7 @@ export class App implements IApp {
     request: Request,
     info?: Deno.ServeHandlerInfo,
   ) => Promise<Response> {
-    return async (request: Request, info?: Deno.ServeHandlerInfo) => {
+    return (request: Request, info?: Deno.ServeHandlerInfo) => {
       const url = new URL(request.url);
       // Prevent open redirect attacks
       url.pathname = url.pathname.replace(/\/+/g, "/");
@@ -72,17 +72,13 @@ export class App implements IApp {
       while (j--) {
         const next = routeResult.handlers[j];
         const local = fn;
-        fn = async () => {
+        fn = () => {
           ctx.next = local;
-          try {
-            return await next(ctx);
-          } catch (error) {
-            throw error;
-          }
+          return next(ctx);
         };
       }
 
-      return await fn();
+      return fn();
     };
   }
 

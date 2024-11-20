@@ -1,6 +1,6 @@
 import type Context from "../context.ts";
 
-export default function (ctx: Context): Promise<Response> | Response {
+export default function (ctx: Context): Promise<Response> {
   const url = ctx.url;
 
   if (url.pathname !== "/" && url.pathname.endsWith("/")) {
